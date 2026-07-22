@@ -1,0 +1,24 @@
+{
+    "canton": "Santo Domingo",
+    "provincia": "Santo Domingo de los Tsáchilas",
+    "periodo": "2014-2025",
+    "serie_homicidios": {
+        "2014": 46,
+        "2015": 28,
+        "2016": 21,
+        "2017": 25,
+        "2018": 31,
+        "2019": 25,
+        "2020": 30,
+        "2021": 66,
+        "2022": 199,
+        "2023": 118,
+        "2024": 53,
+        "2025": 145
+    },
+    "total_homicidios_periodo": 787,
+    "pico_maximo": {
+        "anio": 2022,
+        "casos": 199
+    }
+}

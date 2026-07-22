@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Evaluativo - Seguridad Ciudadana Santo Domingo</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen font-sans p-6">
+    <div class="max-w-6xl mx-auto space-y-8">
+        
+        <!-- Encabezado -->
+        <header class="border-b border-gray-800 pb-6">
+            <span class="text-xs font-semibold uppercase tracking-wider text-indigo-400">Evaluación de Impacto de Política Pública</span>
+            <h1 class="text-3xl font-extrabold mt-1">Seguridad Ciudadana en Santo Domingo de los Tsáchilas</h1>
+            <p class="text-gray-400 text-sm mt-2">Análisis temporal e impacto causal de las intervenciones estatales (2014 - 2025)</p>
+        </header>
+
+        <!-- Tarjetas de Métricas Clave -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-lg">
+                <span class="text-xs text-gray-400 uppercase font-medium">Ubicación Evaluada</span>
+                <p id="canton" class="text-2xl font-bold mt-1 text-indigo-400">Cargando...</p>
+                <span class="text-xs text-gray-500">Provincia de Santo Domingo</span>
+            </div>
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-lg">
+                <span class="text-xs text-gray-400 uppercase font-medium">Total Homicidios Intencionales</span>
+                <p id="total_homicidios" class="text-3xl font-extrabold mt-1 text-red-500">0</p>
+                <span class="text-xs text-gray-500">Acumulado del periodo 2014-2025</span>
+            </div>
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-lg">
+                <span class="text-xs text-gray-400 uppercase font-medium">Pico Máximo Registrado</span>
+                <p id="pico_max" class="text-3xl font-extrabold mt-1 text-yellow-500">0 <span id="pico_anio" class="text-sm font-normal text-gray-400"></span></p>
+                <span class="text-xs text-gray-500">Año de mayor crisis delictiva</span>
+            </div>
+        </div>
+
+        <!-- Panel del Gráfico -->
+        <div class="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-xl">
+            <div class="mb-4">
+                <h2 class="text-xl font-bold">Evolución Histórica de Homicidios Intencionales</h2>
+                <p class="text-xs text-gray-400">Fuente: Ministerio del Interior - Dirección de Estadística y Economía de la Seguridad</p>
+            </div>
+            <div class="relative h-80 w-full">
+                <canvas id="chartHomicidios"></canvas>
+            </div>
+        </div>
+
+        <!-- Pie de página -->
+        <footer class="text-center text-xs text-gray-500 pt-6 border-t border-gray-800">
+            Proyecto Integrador Final | Autor: Alexis Wilota | Asignatura: Políticas Públicas
+        </footer>
+    </div>
+
+    <!-- Script de Carga de Datos y Graficación -->
+    <script>
+        fetch('datos_seguridad_sd.json')
+            .then(response => response.json())
+            .then(data => {
+                // Actualizar métricas en las tarjetas
+                document.getElementById('canton').innerText = data.canton;
+                document.getElementById('total_homicidios').innerText = data.total_homicidios_periodo;
+                document.getElementById('pico_max').innerHTML = `${data.pico_maximo.casos} <span class="text-sm font-normal text-gray-400">(${data.pico_maximo.anio})</span>`;
+
+                // Preparar datos para el gráfico
+                const anios = Object.keys(data.serie_homicidios);
+                const casos = Object.values(data.serie_homicidios);
+
+                // Configurar Chart.js
+                const ctx = document.getElementById('chartHomicidios').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: anios,
+                        datasets: [{
+                            label: 'Homicidios Intencionales',
+                            data: casos,
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.15)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            pointBackgroundColor: '#818cf8'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: '#e5e7eb' } }
+                        },
+                        scales: {
+                            x: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } },
+                            y: { ticks: { color: '#9ca3af' }, grid: { color: '#374151' } }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error al cargar los datos del JSON:', error));
+    </script>
+</body>
+</html>
